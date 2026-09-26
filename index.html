@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Lesson Ledger" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="icon.svg" />
+    <meta
+      name="description"
+      content="Lesson Ledger — a calm, mobile-first calendar and earnings tracker for private tuition lessons."
+    />
+    <title>Lesson Ledger | Tuition tracker</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%23276a51'/%3E%3Ctext x='20' y='27' font-family='system-ui,sans-serif' font-size='18' font-weight='800' fill='white' text-anchor='middle'%3Ell%3C/text%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="domain.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#home" aria-label="Lesson Ledger home">
+          <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.42 10.92a1 1 0 0 0 0-1.84l-7.42-3.11a2 2 0 0 0-1.5 0L5.08 9.08a1 1 0 0 0 0 1.84l7.42 3.11a2 2 0 0 0 1.5 0l7.42-3.11Z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg></span>
+          <span class="brand-name">lesson<span>ledger</span><small>tuition tracker</small></span>
+        </a>
+        <nav class="top-nav" aria-label="Main navigation">
+          <button class="nav-link is-active" type="button" data-view="home">
+            Calendar
+          </button>
+          <button class="nav-link" type="button" data-view="history">
+            Reports & history
+          </button>
+        </nav>
+        <div class="topbar-date" id="topbarDate" title="Today"></div>
+      </header>
+
+      <main>
+        <section id="homeScreen" class="screen" aria-label="Tuition calendar">
+          <div class="page-heading">
+            <div>
+              <p class="eyebrow">Your teaching, in rhythm</p>
+              <h1>Tuition calendar</h1>
+            </div>
+            <button
+              class="button button-primary add-button"
+              type="button"
+              id="addTuitionButton"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+              Add tuition
+            </button>
+          </div>
+
+          <section
+            class="calendar-layout"
+            aria-label="Attendance calendar and selected tuition"
+          >
+            <div class="calendar-column">
+              <div class="calendar-toolbar">
+                <div class="month-controls">
+                  <button
+                    class="icon-button"
+                    type="button"
+                    id="previousMonth"
+                    aria-label="Previous month"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+                  </button>
+                  <h2 id="monthLabel">Month</h2>
+                  <button
+                    class="icon-button"
+                    type="button"
+                    id="nextMonth"
+                    aria-label="Next month"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+                  </button>
+                </div>
+                <button class="today-button" type="button" id="todayButton">
+                  Today
+                </button>
+              </div>
+              <div
+                class="calendar-grid"
+                id="calendarGrid"
+                role="grid"
+                aria-label="Monthly attendance calendar"
+              ></div>
+              <div
+                class="calendar-legend"
+                id="calendarLegend"
+                aria-label="Tuition colors"
+              ></div>
+              <div
+                class="selected-date-line"
+                id="selectedDateSummary"
+                aria-live="polite"
+              ></div>
+            </div>
+
+            <aside class="focus-column" aria-label="Selected tuition progress">
+              <div class="focus-heading">
+                <div>
+                  <p class="eyebrow">Selected tuition</p>
+                  <label class="sr-only" for="tuitionPicker"
+                    >Choose a tuition</label
+                  >
+                  <select
+                    id="tuitionPicker"
+                    aria-label="Choose a tuition"
+                  ></select>
+                </div>
+                <span
+                  class="focus-color"
+                  id="focusColor"
+                  aria-hidden="true"
+                ></span>
+              </div>
+              <div id="currentCyclePanel" class="cycle-panel"></div>
+            </aside>
+          </section>
+
+          <section class="tuition-section" aria-labelledby="tuitionListTitle">
+            <div class="section-heading-row">
+              <div>
+                <p class="eyebrow">Your roster</p>
+                <h2 id="tuitionListTitle">Tuitions</h2>
+              </div>
+              <span class="count-label" id="tuitionCount"></span>
+            </div>
+            <div class="tuition-list" id="tuitionList"></div>
+            <div class="completed-section" id="completedSection" hidden>
+              <div class="completed-heading">
+                <span class="completed-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+                <h3>Completed cycles</h3>
+              </div>
+              <div class="completed-list" id="completedList"></div>
+            </div>
+          </section>
+        </section>
+
+        <section id="historyScreen" class="screen" hidden aria-label="Reports and history">
+          <div class="page-heading history-heading">
+            <div>
+              <p class="eyebrow">The full picture</p>
+              <h1>Reports & history</h1>
+            </div>
+            <button
+              class="button button-primary add-button"
+              type="button"
+              id="historyAddButton"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+              Add tuition
+            </button>
+          </div>
+          <div class="report-strip" id="reportStrip"></div>
+          <div class="history-filter-row">
+            <h2>Tuition records</h2>
+            <label class="sr-only" for="historyFilter"
+              >Filter tuition records</label
+            >
+            <select id="historyFilter">
+              <option value="all">All records</option>
+              <option value="active">Active only</option>
+              <option value="archived">Archived only</option>
+            </select>
+          </div>
+          <div class="history-list" id="historyList"></div>
+        </section>
+      </main>
+
+      <nav class="mobile-nav" aria-label="Main navigation">
+        <button
+          class="mobile-nav-link is-active"
+          type="button"
+          data-view="home"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          Calendar
+        </button>
+        <button class="mobile-nav-link" type="button" data-view="history">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg>
+          History
+        </button>
+      </nav>
+      <button id="fabAdd" class="fab" type="button" aria-label="Add tuition">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+      <div id="installBanner" class="install-banner" hidden>
+        <div class="install-copy">
+          <strong>Install Lesson Ledger</strong>
+          <span>Add to your home screen for full-screen, offline use.</span>
+        </div>
+        <div class="install-actions">
+          <button class="button button-dark" type="button" id="installButton">Install</button>
+          <button class="text-action text-action-muted" type="button" id="installDismiss">Not now</button>
+        </div>
+      </div>
+    </div>
+
+    <dialog id="tuitionDialog" class="dialog" aria-labelledby="tuitionDialogTitle">
+      <form id="tuitionForm" class="dialog-form" novalidate>
+        <div class="sheet-handle" aria-hidden="true"><i></i></div>
+        <div class="dialog-heading">
+          <div>
+            <p class="eyebrow">Tuition details</p>
+            <h2 id="tuitionDialogTitle">Add tuition</h2>
+          </div>
+          <button
+            class="icon-button dialog-close"
+            type="button"
+            data-close-dialog
+            aria-label="Close dialog"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <input type="hidden" id="tuitionId" />
+        <label class="field-label" for="tuitionName">Tuition name</label>
+        <input
+          class="text-input"
+          id="tuitionName"
+          name="name"
+          type="text"
+          maxlength="48"
+          placeholder="e.g. Siam"
+          required
+          autocomplete="off"
+        />
+        <label class="field-label" for="tuitionSubject">Subject</label>
+        <input
+          class="text-input"
+          id="tuitionSubject"
+          name="subject"
+          type="text"
+          maxlength="48"
+          placeholder="e.g. Mathematics"
+          required
+          autocomplete="off"
+        />
+        <div class="field-pair">
+          <div>
+            <label class="field-label" for="tuitionQuota"
+              >Lessons per cycle</label
+            ><input
+              class="text-input"
+              id="tuitionQuota"
+              name="quota"
+              type="number"
+              min="1"
+              max="366"
+              step="1"
+              inputmode="numeric"
+              placeholder="16"
+              required
+            />
+          </div>
+          <div>
+            <label class="field-label" for="tuitionFee">Monthly fee (৳)</label
+            ><input
+              class="text-input"
+              id="tuitionFee"
+              name="fee"
+              type="number"
+              min="0"
+              step="1"
+              inputmode="numeric"
+              placeholder="4000"
+              required
+            />
+          </div>
+        </div>
+        <fieldset class="color-fieldset">
+          <legend class="field-label">Identify with a color</legend>
+          <div class="color-options" id="colorOptions"></div>
+        </fieldset>
+        <p class="form-error" id="formError" role="alert"></p>
+        <div class="dialog-actions">
+          <button class="button button-quiet" type="button" data-close-dialog>
+            Cancel
+          </button>
+          <button
+            class="button button-primary"
+            type="submit"
+            id="saveTuitionButton"
+          >
+            Save tuition
+          </button>
+        </div>
+      </form>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <div class="confetti-layer" id="confettiLayer" aria-hidden="true"></div>
+  </body>
+</html>
